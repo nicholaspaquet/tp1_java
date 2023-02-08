@@ -1,4 +1,10 @@
 import java.util.Random;
+import java.util.Scanner;
+
+/**
+ * @author Nicholas Paquet
+ * @since 8 fevrier 2023
+ */
 
 public class Bataille {
     public static int[][] grilleOrdi = new int[10][10];
@@ -8,22 +14,9 @@ public class Bataille {
      * @param args
      */
     public static void main(String[] args) {
-        // int[][] grilleDeJeuTest = {
-        // { 5, 6, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
-        // { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 2
-        // { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 3
-        // { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 4
-        // { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 5
-        // { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 6
-        // { 0, 3, 3, 3, 0, 0, 0, 0, 0, 0 }, // 7
-        // { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 8
-        // { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 9
-        // { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 } // 10
-        // };
-        // afficherGrille(grilleDeJeuTest);
+        // initGrilleOrdi();
         // afficherGrille(grilleOrdi);
-        initGrilleOrdi();
-        afficherGrille(grilleOrdi);
+        initGrilleJeu();
     }
 
     /**
@@ -41,9 +34,7 @@ public class Bataille {
         if (d == 1 && c + t < 10) {
             for (int i = c; i < c + t; ++i) {
                 if (grille[l][i] != 0) {
-                    // System.out.printf("[%d][%d] [%d][%d]\n", l + 1, c, l + 1, c + t);
                     possibleDePlacerBateau = false;
-                    System.out.printf("Il y a deja un bateau ici.[%d][%d]\n", l + 1, i + 1);
                     break;
                 } else {
                     possibleDePlacerBateau = true;
@@ -52,8 +43,6 @@ public class Bataille {
         } else if (d == 2 && l + t < 10) {
             for (int i = l; i < l + t; ++i) {
                 if (grille[i][c] != 0) {
-                    // System.out.printf("[%d][%d] [%d][%d]\n", l + 1, c, l + 1, c + t);
-                    System.out.printf("Il y a deja un bateau ici.[%d][%d]\n", l + 1, i + 1);
                     possibleDePlacerBateau = false;
                     break;
                 } else {
@@ -61,7 +50,6 @@ public class Bataille {
                 }
             }
         }
-        // afficherGrille(grille);
         return possibleDePlacerBateau;
     }
 
@@ -73,6 +61,7 @@ public class Bataille {
      * @param b limite superieur pour la generation d'un nombre aleatoire
      * @return retourne un entier aleatoire entre a inclu et b exclu
      */
+
     public static int randRange(int a, int b) {
         return rand.nextInt(b - a) + a;
     }
@@ -82,11 +71,7 @@ public class Bataille {
         int c = randRange(0, 10);
         int d = randRange(1, 3);
         int[] t = { 5, 4, 3, 3, 1 };
-        // porte-avion, representé par le nombre 1, 5 cases
-        // croiseur, representé par le nombre 2, 4 cases
-        // contre-torpilleur, representé par le nombre 3, 3 cases
-        // sous-marin, representé par le nombre 4, 3 cases
-        // torpilleur, representé par le nombre 5, 1 cases
+
         for (int bateau = 0; bateau < 5; ++bateau) {
             while (!posOk(grilleOrdi, l, c, d, t[bateau])) {
                 l = randRange(0, 10);
@@ -109,6 +94,7 @@ public class Bataille {
      * 
      * @param grille grille de jeu de bataille navale
      */
+
     public static void afficherGrille(int[][] grille) {
         char[] premiereLigne = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 
@@ -125,4 +111,48 @@ public class Bataille {
             System.out.println();
         }
     }
+
+    public static void initGrilleJeu() {
+        Scanner scanner = new Scanner(System.in);
+        String[] bateau = { "porte-avions", "croiseur", "contre-torpilleur", "sous-marin", "torpilleur" };
+
+        char lettre = '0';
+        int nombre = 0;
+        int direction = 0;
+        int i = 0;
+
+        do {
+            System.out.printf("Donnez la lettre pour le %s: ", bateau[i]);
+            lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
+        } while (lettre < 'A' || lettre > 'J');
+
+        do {
+            System.out.printf("Donnez le nombre pour le %s: ", bateau[i]);
+            nombre = Integer.valueOf(scanner.nextLine());
+        } while (nombre < 1 || nombre > 9);
+        
+        do {
+            System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
+            direction = Integer.valueOf(scanner.nextLine());
+        } while (direction < 1 || direction > 2);
+    }
 }
+
+// porte-avion, representé par le nombre 1, 5 cases
+// croiseur, representé par le nombre 2, 4 cases
+// contre-torpilleur, representé par le nombre 3, 3 cases
+// sous-marin, representé par le nombre 4, 3 cases
+// torpilleur, representé par le nombre 5, 1 cases
+
+// int[][] grilleDeJeuTest = {
+// { 5, 6, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
+// { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 2
+// { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 3
+// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 4
+// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 5
+// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 6
+// { 0, 3, 3, 3, 0, 0, 0, 0, 0, 0 }, // 7
+// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 8
+// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 9
+// { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 } // 10
+// };
