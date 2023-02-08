@@ -39,19 +39,29 @@ public class Bataille {
         boolean possibleDePlacerBateau = false;
 
         if (d == 1 && c + t < 10) {
-            System.out.println("Direction : horizontale");
-            if (grille[l][c] == 0 && grille[l][c + t] == 0) {
-                possibleDePlacerBateau = true;
-                System.out.printf("La position[%d][%d] et la position[%d][%d] sont libres.\n", l + 1, c, l, c + t);
+            for (int i = c; i < c + t; ++i) {
+                if (grille[l][i] != 0) {
+                    // System.out.printf("[%d][%d] [%d][%d]\n", l + 1, c, l + 1, c + t);
+                    possibleDePlacerBateau = false;
+                    System.out.printf("Il y a deja un bateau ici.[%d][%d]\n", l + 1, i + 1);
+                    break;
+                } else {
+                    possibleDePlacerBateau = true;
+                }
             }
-        } else if (l + t < 10) {
-            System.out.println("Direction : verticale");
-            if (grille[l][c] == 0 && grille[l + t][c] == 0) {
-                possibleDePlacerBateau = true;
-                System.out.printf("La position[%d][%d] et la position[%d][%d] sont libres.\n", l + 1, c, l + t, c);
+        } else if (d == 2 && l + t < 10) {
+            for (int i = l; i < l + t; ++i) {
+                if (grille[i][c] != 0) {
+                    // System.out.printf("[%d][%d] [%d][%d]\n", l + 1, c, l + 1, c + t);
+                    System.out.printf("Il y a deja un bateau ici.[%d][%d]\n", l + 1, i + 1);
+                    possibleDePlacerBateau = false;
+                    break;
+                } else {
+                    possibleDePlacerBateau = true;
+                }
             }
         }
-        afficherGrille(grille);
+        // afficherGrille(grille);
         return possibleDePlacerBateau;
     }
 
@@ -77,7 +87,7 @@ public class Bataille {
         // contre-torpilleur, representé par le nombre 3, 3 cases
         // sous-marin, representé par le nombre 4, 3 cases
         // torpilleur, representé par le nombre 5, 1 cases
-        for (int bateau = 1; bateau < 5; ++bateau) {
+        for (int bateau = 0; bateau < 5; ++bateau) {
             while (!posOk(grilleOrdi, l, c, d, t[bateau])) {
                 l = randRange(0, 10);
                 c = randRange(0, 10);
@@ -87,7 +97,7 @@ public class Bataille {
                 for (int i = c; i < c + t[bateau]; ++i) {
                     grilleOrdi[l][i] = bateau + 1;
                 }
-            } else {
+            } else if (d == 2) {
                 for (int i = l; i < l + t[bateau]; ++i) {
                     grilleOrdi[i][c] = bateau + 1;
                 }
@@ -101,10 +111,12 @@ public class Bataille {
      */
     public static void afficherGrille(int[][] grille) {
         char[] premiereLigne = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+
         for (char lettre : premiereLigne) {
             System.out.printf("%2c ", lettre);
         }
         System.out.println();
+
         for (int i = 0; i < 10; ++i) {
             System.out.printf("%2d ", i + 1);
             for (int j = 0; j < 10; ++j) {
