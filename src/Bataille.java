@@ -17,6 +17,7 @@ public class Bataille {
         // initGrilleOrdi();
         // afficherGrille(grilleOrdi);
         initGrilleJeu();
+        scanner.close();
     }
 
     /**
@@ -113,28 +114,81 @@ public class Bataille {
     }
 
     public static void initGrilleJeu() {
-        Scanner scanner = new Scanner(System.in);
         String[] bateau = { "porte-avions", "croiseur", "contre-torpilleur", "sous-marin", "torpilleur" };
+        int[] t = { 5, 4, 3, 3, 1 };
 
-        char lettre = '0';
-        int nombre = 0;
-        int direction = 0;
-        int i = 0;
+        for (int i = 0; i < 5; ++i) {
+            int c = lireLettreBateau(bateau[i]);
+            int l = lireNombreBateau(bateau[i]);
+            int d = lireDirectionBateau(bateau[i]);
+            System.out.println("c: " + c);
 
-        do {
-            System.out.printf("Donnez la lettre pour le %s: ", bateau[i]);
+            while (!posOk(grilleJeu, l, c, d, t[i])) {
+                System.out.printf("Il y a deja un bateau ici. Veuillez choisir une autre position pour placer le %s\n",
+                        bateau[i]);
+                c = lireLettreBateau(bateau[i]);
+                l = lireNombreBateau(bateau[i]);
+                d = lireDirectionBateau(bateau[i]);
+            }
+
+            if (d == 1) {
+                for (int j = c; j < c + t[i]; ++j) {
+                    grilleJeu[l][j] = i + 1;
+                }
+            } else if (d == 2) {
+                for (int j = l; j < l + t[i]; ++j) {
+                    grilleJeu[j][c] = i + 1;
+                }
+            }
+            afficherGrille(grilleJeu);
+            System.out.printf("Le %s a ete place.\n", bateau[i]);
+        }
+    }
+
+    static Scanner scanner = new Scanner(System.in);
+
+    public static int lireLettreBateau(String bateau) {
+
+        char lettre;
+
+        System.out.printf("Donnez la lettre pour le %s: ", bateau);
+        lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
+
+        while (lettre < 'A' || lettre > 'J') {
+            System.out.println("Lettre invalide, veuillez entre une lettre de 'A' a 'J'.");
+            System.out.printf("Donnez la lettre pour le %s: ", bateau);
             lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
-        } while (lettre < 'A' || lettre > 'J');
+        }
+        return (Integer.valueOf(lettre) - 65);
 
-        do {
-            System.out.printf("Donnez le nombre pour le %s: ", bateau[i]);
+    }
+
+    public static int lireNombreBateau(String bateau) {
+        int nombre;
+
+        System.out.printf("Donnez le nombre pour le %s: ", bateau);
+        nombre = Integer.valueOf(scanner.nextLine());
+
+        while (nombre < 1 || nombre > 9) {
+            System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
+            System.out.printf("Donnez le nombre pour le %s: ", bateau);
             nombre = Integer.valueOf(scanner.nextLine());
-        } while (nombre < 1 || nombre > 9);
-        
-        do {
+        }
+        return nombre - 1;
+    }
+
+    public static int lireDirectionBateau(String bateau) {
+        int direction;
+
+        System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
+        direction = Integer.valueOf(scanner.nextLine());
+
+        while (direction < 1 || direction > 2) {
+            // System.out.println("Direction invalide, veuillez entrer 1 ou 2.");
             System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
             direction = Integer.valueOf(scanner.nextLine());
-        } while (direction < 1 || direction > 2);
+        }
+        return direction;
     }
 }
 
