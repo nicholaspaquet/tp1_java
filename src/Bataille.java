@@ -28,7 +28,11 @@ public class Bataille {
      */
     public static void main(String[] args) {
         // System.out.println("test: "+ (char)(1+'0'));
-        engagement();
+        // engagement();
+        
+        String nombre = "e";
+        estUnNombre(nombre);
+
         scanner.close();
     }
 
@@ -183,17 +187,29 @@ public class Bataille {
 
     // Plante si on entre une lettre
     public static int lireNombreBateau() {
-        int nombre;
+    // String input;
+    int nombre;
 
-        System.out.printf("Donnez le nombre pour le bateau: ");
-        nombre = Integer.valueOf(scanner.nextLine());
+    System.out.printf("Donnez le nombre pour le bateau: ");
+    nombre = Integer.valueOf(scanner.nextLine());
 
-        while (nombre < 1 || nombre > 10) {
-            System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
-            System.out.printf("Donnez le nombre pour le bateau: ");
-            nombre = Integer.valueOf(scanner.nextLine());
+    while (nombre < 1 || nombre > 10) {
+    System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
+    System.out.printf("Donnez le nombre pour le bateau: ");
+    nombre = Integer.valueOf(scanner.nextLine());
+    }
+    return nombre - 1;
+    }
+
+    public static boolean estUnNombre(String nombre) {
+        try {
+            Integer.valueOf(nombre);
+        } catch (NumberFormatException exception) {
+            System.out.println("Ce n'est pas un nombre.");
+            return false;
         }
-        return nombre - 1;
+        System.out.println("C'est un nombre.");
+        return true;
     }
 
     public static int lireDirectionBateau() {
