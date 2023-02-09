@@ -30,6 +30,7 @@ public class Bataille {
         // System.out.println("test: "+ (char)(1+'0'));
         // engagement();
 
+        lireLettreBateau();
         lireNombreBateau();
         lireDirectionBateau();
 
@@ -170,58 +171,27 @@ public class Bataille {
     static Scanner scanner = new Scanner(System.in);
 
     public static int lireLettreBateau() {
-
-        char lettre;
+        String lecture;
+        char lettre = '0';
 
         System.out.printf("Donnez la lettre pour le bateau: ");
-        lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
+        // lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
+        lecture = scanner.nextLine();
+
+        if (!lecture.isEmpty()) {
+            lettre = Character.toUpperCase(lecture.charAt(0));
+        }
 
         while (lettre < 'A' || lettre > 'J') {
             System.out.println("Lettre invalide, veuillez entre une lettre de 'A' a 'J'.");
             System.out.printf("Donnez la lettre pour le bateau: ");
-            lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
-        }
-        return (Integer.valueOf(lettre) - 65);
+            lecture = scanner.nextLine();
 
-    }
-
-    // Plante si on entre une lettre
-    // public static int lireNombreBateau() {
-    // // String input;
-    // int nombre;
-
-    // System.out.printf("Donnez le nombre pour le bateau: ");
-    // nombre = Integer.valueOf(scanner.nextLine());
-
-    // while (nombre < 1 || nombre > 10) {
-    // System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
-    // System.out.printf("Donnez le nombre pour le bateau: ");
-    // nombre = Integer.valueOf(scanner.nextLine());
-    // }
-    // return nombre - 1;
-    // }
-
-    public static int lireNombreBateau() {
-        String inputNombre;
-        int nombre = 0;
-
-        System.out.printf("Donnez le nombre pour le bateau: ");
-        inputNombre = scanner.nextLine();
-
-        if (estUnNombre(inputNombre)) {
-            nombre = Integer.valueOf(inputNombre);
-        }
-
-        while (nombre < 1 || nombre > 10) {
-            System.out.println("Nombre invalide, veuillez entrez un nombre de 1 à 10.");
-            System.out.printf("Donnez le nombre pour le bateau: ");
-            inputNombre = scanner.nextLine();
-
-            if (estUnNombre(inputNombre)) {
-                nombre = Integer.valueOf(inputNombre);
+            if (!lecture.isEmpty()) {
+                lettre = Character.toUpperCase(lecture.charAt(0));
             }
         }
-        return nombre - 1;
+        return (Integer.valueOf(lettre) - 65);
     }
 
     /**
@@ -247,24 +217,47 @@ public class Bataille {
         return true;
     }
 
+    public static int lireNombreBateau() {
+        String lecture;
+        int nombre = 0;
+
+        System.out.printf("Donnez le nombre pour le bateau: ");
+        lecture = scanner.nextLine();
+
+        if (estUnNombre(lecture)) {
+            nombre = Integer.valueOf(lecture);
+        }
+
+        while (nombre < 1 || nombre > 10) {
+            System.out.println("Nombre invalide, veuillez entrez un nombre de 1 à 10.");
+            System.out.printf("Donnez le nombre pour le bateau: ");
+            lecture = scanner.nextLine();
+
+            if (estUnNombre(lecture)) {
+                nombre = Integer.valueOf(lecture);
+            }
+        }
+        return nombre - 1;
+    }
+
     public static int lireDirectionBateau() {
-        String inputNombre;
+        String lecture;
         int direction = 0;
 
         System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
-        inputNombre = scanner.nextLine();
+        lecture = scanner.nextLine();
 
-        if (estUnNombre(inputNombre)) {
-            direction = Integer.valueOf(inputNombre);
+        if (estUnNombre(lecture)) {
+            direction = Integer.valueOf(lecture);
         }
 
         while (direction < 1 || direction > 2) {
             System.out.println("Direction invalide, veuillez entrer 1 ou 2.");
             System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
-            inputNombre = scanner.nextLine();
+            lecture = scanner.nextLine();
 
-            if (estUnNombre(inputNombre)) {
-                direction = Integer.valueOf(inputNombre);
+            if (estUnNombre(lecture)) {
+                direction = Integer.valueOf(lecture);
             }
         }
         return direction;
