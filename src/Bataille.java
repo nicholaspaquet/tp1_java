@@ -27,6 +27,7 @@ public class Bataille {
      * @param args
      */
     public static void main(String[] args) {
+        // System.out.println("test: "+ (char)(1+'0'));
         engagement();
         scanner.close();
     }
@@ -127,21 +128,25 @@ public class Bataille {
     }
 
     public static void initGrilleJeu() {
-        String[] bateau = { "porte-avions", "croiseur", "contre-torpilleur", "sous-marin", "torpilleur" };
+        String[] nomBateau = { "porte-avions", "croiseur", "contre-torpilleur", "sous-marin", "torpilleur" };
         int[] t = { 5, 4, 3, 3, 1 };
 
         for (int i = 0; i < 5; ++i) {
-            int c = lireLettreBateau(bateau[i]);
-            int l = lireNombreBateau(bateau[i]);
-            int d = lireDirectionBateau(bateau[i]);
-            System.out.println("c: " + c);
+            System.out.printf("Placement du %s\n", nomBateau[i]);
+
+            // Lecture de trois données demandé au joueur
+            int c = lireLettreBateau();
+            int l = lireNombreBateau();
+            int d = lireDirectionBateau();
 
             while (!posOk(grilleJeu, l, c, d, t[i])) {
-                System.out.printf("Il y a deja un bateau ici. Veuillez choisir une autre position pour placer le %s\n",
-                        bateau[i]);
-                c = lireLettreBateau(bateau[i]);
-                l = lireNombreBateau(bateau[i]);
-                d = lireDirectionBateau(bateau[i]);
+                System.out.printf(
+                        "Impossible de placer un bateau ici. Veuillez choisir une autre position pour placer le %s\n",
+                        nomBateau[i]);
+
+                c = lireLettreBateau();
+                l = lireNombreBateau();
+                d = lireDirectionBateau();
             }
 
             if (d == 1) {
@@ -154,43 +159,44 @@ public class Bataille {
                 }
             }
             afficherGrille(grilleJeu);
-            System.out.printf("Le %s a ete place.\n", bateau[i]);
+            System.out.printf("Le %s a ete place.\n", nomBateau[i]);
         }
     }
 
     static Scanner scanner = new Scanner(System.in);
 
-    public static int lireLettreBateau(String bateau) {
+    public static int lireLettreBateau() {
 
         char lettre;
 
-        System.out.printf("Donnez la lettre pour le %s: ", bateau);
+        System.out.printf("Donnez la lettre pour le bateau: ");
         lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
 
         while (lettre < 'A' || lettre > 'J') {
             System.out.println("Lettre invalide, veuillez entre une lettre de 'A' a 'J'.");
-            System.out.printf("Donnez la lettre pour le %s: ", bateau);
+            System.out.printf("Donnez la lettre pour le bateau: ");
             lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
         }
         return (Integer.valueOf(lettre) - 65);
 
     }
 
-    public static int lireNombreBateau(String bateau) {
+    // Plante si on entre une lettre
+    public static int lireNombreBateau() {
         int nombre;
 
-        System.out.printf("Donnez le nombre pour le %s: ", bateau);
+        System.out.printf("Donnez le nombre pour le bateau: ");
         nombre = Integer.valueOf(scanner.nextLine());
 
         while (nombre < 1 || nombre > 9) {
             System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
-            System.out.printf("Donnez le nombre pour le %s: ", bateau);
+            System.out.printf("Donnez le nombre pour le bateau: ");
             nombre = Integer.valueOf(scanner.nextLine());
         }
         return nombre - 1;
     }
 
-    public static int lireDirectionBateau(String bateau) {
+    public static int lireDirectionBateau() {
         int direction;
 
         System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
@@ -278,6 +284,9 @@ public class Bataille {
     }
 
     public static void engagement() {
+        System.out.println("Bienvenue au jeu de bataille navale!\n");
+        System.out.println("Commencez par placer vos bateaux sur la grille de jeu.\n");
+
         // Initialisation des deux grilles de jeu
         initGrilleOrdi();
         // initGrilleJeu();
@@ -286,7 +295,14 @@ public class Bataille {
         // while (!vainqueur(grilleJeu) && !vainqueur(grilleOrdi)) {
         // // L'ordinateur joue en premier
         // int[] tirOrdi = tirOrdinateur();
+
+        // System.out.println("Tour de l'ordinateur");
+        // System.out.printf("[%c][%d]", Character.forDigit(tirOrdi[0] + 1 - 65, 10),
+        // tirOrdi[1] + 1);
+        // System.out.println();
+
         // mouvement(grilleJeu, tirOrdi[0], tirOrdi[1]);
+
         // System.out.println("Grille du joueur");
         // afficherGrille(grilleJeu);
 
@@ -294,12 +310,15 @@ public class Bataille {
         // if (!vainqueur(grilleJeu)) {
         // int[] tirJoueur = new int[2];
 
-        // tirJoueur[0] = lireLettreBateau(null);
-        // tirJoueur[1] = lireNombreBateau(null);
+        // tirJoueur[0] = lireLettreBateau();
+        // tirJoueur[1] = lireNombreBateau();
+
+        // System.out.println("Tour du joueur");
+        // System.out.printf("[%c][%d]", Character.forDigit(tirJoueur[0] + 1 - 65, 10),
+        // tirJoueur[1] + 1);
+        // System.out.println();
 
         // mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
-        // System.out.println("Grille de l'ordinateur");
-        // afficherGrille(grilleOrdi);
         // }
         // }
 
@@ -309,7 +328,8 @@ public class Bataille {
             int[] tirOrdi = tirOrdinateur();
 
             System.out.println("Tour de l'ordinateur");
-            System.out.printf("[%d][%d]", tirOrdi[0] + 1, tirOrdi[1] + 1);
+            System.out.printf("[%c][%d]", (char)(tirOrdi[0] + 1 + 'A'), tirOrdi[1] + 1);
+
             System.out.println();
 
             mouvement(grilleDeJeuTest, tirOrdi[0], tirOrdi[1]);
