@@ -10,13 +10,24 @@ public class Bataille {
     public static int[][] grilleOrdi = new int[10][10];
     public static int[][] grilleJeu = new int[10][10];
 
+    public static int[][] grilleDeJeuTest = {
+            { 5, 6, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
+            { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 2
+            { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 3
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 4
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 5
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 6
+            { 0, 3, 3, 3, 0, 0, 0, 0, 0, 0 }, // 7
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 8
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 9
+            { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 } // 10
+    };
+
     /**
      * @param args
      */
     public static void main(String[] args) {
-        // initGrilleOrdi();
-        // afficherGrille(grilleOrdi);
-        initGrilleJeu();
+        engagement();
         scanner.close();
     }
 
@@ -94,6 +105,7 @@ public class Bataille {
     /**
      * 
      * @param grille grille de jeu de bataille navale
+     *               Cette fonction affiche la grille qu'on lui passe en paramètre
      */
 
     public static void afficherGrille(int[][] grille) {
@@ -111,6 +123,7 @@ public class Bataille {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public static void initGrilleJeu() {
@@ -189,6 +202,142 @@ public class Bataille {
             direction = Integer.valueOf(scanner.nextLine());
         }
         return direction;
+    }
+
+    /**
+     * @param grille une grille de jeu
+     * @param bateau un numéro de bateau de 1 à 5
+     * @return vrai si le bateau a coulé, faux si le bateau est toujours sur la
+     *         grille
+     * 
+     *         Cette fonction retourne si le bateau donné en argument est toujours
+     *         sur la grille de jeu.
+     */
+
+    public static boolean couler(int[][] grille, int bateau) {
+        for (int ligne = 0; ligne < 10; ++ligne) {
+            for (int colonne = 0; colonne < 10; ++colonne) {
+                if (grille[ligne][colonne] == bateau) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param grille Une grille de jeu
+     * @param l      Numéro de ligne
+     * @param c      Numéro de colonne
+     */
+
+    public static void mouvement(int[][] grille, int l, int c) {
+        int numeroBateau = grille[l][c];
+
+        System.out.print("Résultat du tir: ");
+        if (numeroBateau == 0 || numeroBateau == 6) {
+            System.out.print("À l'eau");
+        } else if (numeroBateau >= 1 && numeroBateau <= 5) {
+            grille[l][c] = 6;
+
+            if (couler(grille, numeroBateau)) {
+                System.out.print("Coulé");
+            } else {
+                System.out.print("Touché");
+            }
+        }
+        System.out.println();
+    }
+
+    /**
+     * @return Retourne un tableau avec les coordonnées aléatoires d'un tir
+     */
+    public static int[] tirOrdinateur() {
+        int[] tir = new int[2];
+
+        for (int i = 0; i < 2; ++i) {
+            tir[i] = randRange(0, 10);
+        }
+        return tir;
+    }
+
+    /**
+     * @param grille Une grille de jeu
+     * @return Retourne faux s'il reste un bateau sur la grille de jeu, sinon
+     *         retourne vrai
+     */
+    public static boolean vainqueur(int[][] grille) {
+        for (int ligne = 0; ligne < 10; ++ligne) {
+            for (int colonne = 0; colonne < 10; ++colonne) {
+                if (grille[ligne][colonne] >= 1 && grille[ligne][colonne] <= 5) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void engagement() {
+        // Initialisation des deux grilles de jeu
+        initGrilleOrdi();
+        // initGrilleJeu();
+
+        // Boucle tant que les grilles contiennent des bateaux
+        // while (!vainqueur(grilleJeu) && !vainqueur(grilleOrdi)) {
+        // // L'ordinateur joue en premier
+        // int[] tirOrdi = tirOrdinateur();
+        // mouvement(grilleJeu, tirOrdi[0], tirOrdi[1]);
+        // System.out.println("Grille du joueur");
+        // afficherGrille(grilleJeu);
+
+        // // Le joueur peut jouer tant qu'il lui reste un bateau
+        // if (!vainqueur(grilleJeu)) {
+        // int[] tirJoueur = new int[2];
+
+        // tirJoueur[0] = lireLettreBateau(null);
+        // tirJoueur[1] = lireNombreBateau(null);
+
+        // mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
+        // System.out.println("Grille de l'ordinateur");
+        // afficherGrille(grilleOrdi);
+        // }
+        // }
+
+        // Test
+        while (!vainqueur(grilleDeJeuTest) && !vainqueur(grilleOrdi)) {
+            // L'ordinateur joue en premier
+            int[] tirOrdi = tirOrdinateur();
+
+            System.out.println("Tour de l'ordinateur");
+            System.out.printf("[%d][%d]", tirOrdi[0] + 1, tirOrdi[1] + 1);
+            System.out.println();
+
+            mouvement(grilleDeJeuTest, tirOrdi[0], tirOrdi[1]);
+
+            System.out.println("Grille du joueur");
+            afficherGrille(grilleDeJeuTest);
+
+            // Le joueur peut jouer tant qu'il lui reste un bateau
+            if (!vainqueur(grilleDeJeuTest)) {
+                int[] tirJoueur = tirOrdinateur();
+
+                System.out.println("Tour du joueur");
+                System.out.printf("[%d][%d]", tirJoueur[0] + 1, tirJoueur[1] + 1);
+                System.out.println();
+
+                mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
+
+                System.out.println("Grille de l'ordinateur");
+                afficherGrille(grilleOrdi);
+            }
+        }
+
+        // Affichage du vainqueur à la fin de la partie
+        if (vainqueur(grilleDeJeuTest)) {
+            System.out.println("L'ordinateur a gagné! Vous avez perdu!");
+        } else {
+            System.out.println("Vous avez gagné! L'ordinateur a perdu!");
+        }
     }
 }
 
