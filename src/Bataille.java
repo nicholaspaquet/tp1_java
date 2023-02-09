@@ -11,7 +11,7 @@ public class Bataille {
     public static int[][] grilleJeu = new int[10][10];
 
     public static int[][] grilleDeJeuTest = {
-            { 5, 6, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
+            { 5, 0, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
             { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 2
             { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 3
             { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 4
@@ -188,7 +188,7 @@ public class Bataille {
         System.out.printf("Donnez le nombre pour le bateau: ");
         nombre = Integer.valueOf(scanner.nextLine());
 
-        while (nombre < 1 || nombre > 9) {
+        while (nombre < 1 || nombre > 10) {
             System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
             System.out.printf("Donnez le nombre pour le bateau: ");
             nombre = Integer.valueOf(scanner.nextLine());
@@ -297,8 +297,7 @@ public class Bataille {
         // int[] tirOrdi = tirOrdinateur();
 
         // System.out.println("Tour de l'ordinateur");
-        // System.out.printf("[%c][%d]", Character.forDigit(tirOrdi[0] + 1 - 65, 10),
-        // tirOrdi[1] + 1);
+        // System.out.printf("[%c][%d]", (char) (tirOrdi[0] + 1 + 64), tirOrdi[1] + 1);
         // System.out.println();
 
         // mouvement(grilleJeu, tirOrdi[0], tirOrdi[1]);
@@ -314,8 +313,8 @@ public class Bataille {
         // tirJoueur[1] = lireNombreBateau();
 
         // System.out.println("Tour du joueur");
-        // System.out.printf("[%c][%d]", Character.forDigit(tirJoueur[0] + 1 - 65, 10),
-        // tirJoueur[1] + 1);
+        // System.out.printf("[%c][%d]", (char) (tirOrdi[0] + 1 + 64), tirJoueur[1] +
+        // 1);
         // System.out.println();
 
         // mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
@@ -328,7 +327,7 @@ public class Bataille {
             int[] tirOrdi = tirOrdinateur();
 
             System.out.println("Tour de l'ordinateur");
-            System.out.printf("[%c][%d]", (char)(tirOrdi[0] + 1 + 'A'), tirOrdi[1] + 1);
+            System.out.printf("[%c][%d]", (char) (tirOrdi[1] + 'A'), tirOrdi[0] + 1);
 
             System.out.println();
 
@@ -337,12 +336,14 @@ public class Bataille {
             System.out.println("Grille du joueur");
             afficherGrille(grilleDeJeuTest);
 
+            String bidon = scanner.nextLine();
+
             // Le joueur peut jouer tant qu'il lui reste un bateau
             if (!vainqueur(grilleDeJeuTest)) {
                 int[] tirJoueur = tirOrdinateur();
 
                 System.out.println("Tour du joueur");
-                System.out.printf("[%d][%d]", tirJoueur[0] + 1, tirJoueur[1] + 1);
+                System.out.printf("[%c][%d]", (char) (tirJoueur[1] + 'A'), tirJoueur[0] + 1);
                 System.out.println();
 
                 mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
