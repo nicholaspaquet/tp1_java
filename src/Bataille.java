@@ -29,9 +29,9 @@ public class Bataille {
     public static void main(String[] args) {
         // System.out.println("test: "+ (char)(1+'0'));
         // engagement();
-        
-        String nombre = "e";
-        estUnNombre(nombre);
+
+        lireNombreBateau();
+        lireDirectionBateau();
 
         scanner.close();
     }
@@ -186,42 +186,86 @@ public class Bataille {
     }
 
     // Plante si on entre une lettre
+    // public static int lireNombreBateau() {
+    // // String input;
+    // int nombre;
+
+    // System.out.printf("Donnez le nombre pour le bateau: ");
+    // nombre = Integer.valueOf(scanner.nextLine());
+
+    // while (nombre < 1 || nombre > 10) {
+    // System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
+    // System.out.printf("Donnez le nombre pour le bateau: ");
+    // nombre = Integer.valueOf(scanner.nextLine());
+    // }
+    // return nombre - 1;
+    // }
+
     public static int lireNombreBateau() {
-    // String input;
-    int nombre;
+        String inputNombre;
+        int nombre = 0;
 
-    System.out.printf("Donnez le nombre pour le bateau: ");
-    nombre = Integer.valueOf(scanner.nextLine());
+        System.out.printf("Donnez le nombre pour le bateau: ");
+        inputNombre = scanner.nextLine();
 
-    while (nombre < 1 || nombre > 10) {
-    System.out.println("Nombre invalide, veuillez entrez un nombre de 1 a 10.");
-    System.out.printf("Donnez le nombre pour le bateau: ");
-    nombre = Integer.valueOf(scanner.nextLine());
+        if (estUnNombre(inputNombre)) {
+            nombre = Integer.valueOf(inputNombre);
+        }
+
+        while (nombre < 1 || nombre > 10) {
+            System.out.println("Nombre invalide, veuillez entrez un nombre de 1 à 10.");
+            System.out.printf("Donnez le nombre pour le bateau: ");
+            inputNombre = scanner.nextLine();
+
+            if (estUnNombre(inputNombre)) {
+                nombre = Integer.valueOf(inputNombre);
+            }
+        }
+        return nombre - 1;
     }
-    return nombre - 1;
-    }
+
+    /**
+     * 
+     * @param nombre accepte un nombre sous forme de String
+     * @return Si le String est un nombre, on retourne vrai, sinon on retourne faux
+     *         Basé sur ce que j'ai vu au lien suivant:
+     *         https://www.baeldung.com/java-check-string-number
+     * 
+     *         Essentiellement, c'est l'utilisation du try catch que j'ai appris à
+     *         utiliser. Puisque mon scanner plantait en y entrant une lettre
+     *         lorsque je tentais de lire un nombre. Je recevais un
+     *         NumberFormatException. Avec le try catch, je peux tester pour cette
+     *         exception et ainsi m'assurer de toujours avoir un nombre valide.
+     */
 
     public static boolean estUnNombre(String nombre) {
         try {
             Integer.valueOf(nombre);
         } catch (NumberFormatException exception) {
-            System.out.println("Ce n'est pas un nombre.");
             return false;
         }
-        System.out.println("C'est un nombre.");
         return true;
     }
 
     public static int lireDirectionBateau() {
-        int direction;
+        String inputNombre;
+        int direction = 0;
 
         System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
-        direction = Integer.valueOf(scanner.nextLine());
+        inputNombre = scanner.nextLine();
+
+        if (estUnNombre(inputNombre)) {
+            direction = Integer.valueOf(inputNombre);
+        }
 
         while (direction < 1 || direction > 2) {
-            // System.out.println("Direction invalide, veuillez entrer 1 ou 2.");
+            System.out.println("Direction invalide, veuillez entrer 1 ou 2.");
             System.out.print("Voulez-vous qu'il soit horizontal (1) ou vertical (2): ");
-            direction = Integer.valueOf(scanner.nextLine());
+            inputNombre = scanner.nextLine();
+
+            if (estUnNombre(inputNombre)) {
+                direction = Integer.valueOf(inputNombre);
+            }
         }
         return direction;
     }
