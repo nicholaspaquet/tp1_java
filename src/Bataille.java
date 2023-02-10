@@ -7,9 +7,11 @@ import java.util.Scanner;
  */
 
 public class Bataille {
+    /** Grille de jeu de l'ordinateur */
     public static int[][] grilleOrdi = new int[10][10];
+    /** Grille de jeu du joueur */
     public static int[][] grilleJeu = new int[10][10];
-
+    /** Grille de jeu de test */
     public static int[][] grilleDeJeuTest = {
             { 5, 0, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
             { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 2
@@ -27,18 +29,18 @@ public class Bataille {
      * @param args
      */
     public static void main(String[] args) {
-        // System.out.println("test: "+ (char)(1+'0'));
-        // engagement();
+        engagement();
+        // engagementTest();
 
-        lireLettreBateau();
-        lireNombreBateau();
-        lireDirectionBateau();
-
+        // Si le scanner n'est pas fermé, il y a un "leak" des ressources.
         scanner.close();
     }
 
     /**
-     * @param grille une grille
+     * Valide si les cases voulues sur la grille sont disponibles pour y placer un
+     * bateau.
+     * 
+     * @param grille une grille de jeu
      * @param l      un numero de ligne
      * @param c      un numero de colonne (compris entre 0 et 9)
      * @param d      un entier d codant une direction (1 pour horizontal et 2 pour
@@ -71,9 +73,13 @@ public class Bataille {
         return possibleDePlacerBateau;
     }
 
+    /** Création d'un objet Random afin de pouvoir générer des nombres aléatoires */
     public static Random rand = new Random();
 
     /**
+     * Génère des nombres aléatoires à l'aide de la classe importé java.util.Random.
+     * <p>
+     * Prise telle quelle dans la documentation du tp1.
      * 
      * @param a limite inferieur pour la generation d'un nombre aleatoire
      * @param b limite superieur pour la generation d'un nombre aleatoire
@@ -84,23 +90,32 @@ public class Bataille {
         return rand.nextInt(b - a) + a;
     }
 
-    public static void initGrilleOrdi() {
-        int l = randRange(0, 10);
-        int c = randRange(0, 10);
-        int d = randRange(1, 3);
-        int[] t = { 5, 4, 3, 3, 1 };
+    /**
+     * Initialise la grille de l'ordinateur de façon aléatoire.
+     */
 
+    public static void initGrilleOrdi() {
+        // Génération de trois nombres aléatoires
+        int l = randRange(0, 10); // numéro de ligne
+        int c = randRange(0, 10); // numéro de colonne
+        int d = randRange(1, 3); // direction du bateau
+        int[] t = { 5, 4, 3, 3, 1 }; // le nombre de cases que chaque bateau occupe
+
+        // On boucle 5 fois car il y a 5 bateaux à placer.
         for (int bateau = 0; bateau < 5; ++bateau) {
+            // On boucle tant que les cases voulues ne sont pas disponibles.
             while (!posOk(grilleOrdi, l, c, d, t[bateau])) {
                 l = randRange(0, 10);
                 c = randRange(0, 10);
                 d = randRange(1, 3);
             }
             if (d == 1) {
+                // Placement du bateau à l'horizontale
                 for (int i = c; i < c + t[bateau]; ++i) {
-                    grilleOrdi[l][i] = bateau + 1;
+                    grilleOrdi[l][i] = bateau + 1; // +1 au bateau puisqu'on boucle de 0 à 4
                 }
             } else if (d == 2) {
+                // Placement du bateau à la verticale
                 for (int i = l; i < l + t[bateau]; ++i) {
                     grilleOrdi[i][c] = bateau + 1;
                 }
@@ -109,9 +124,9 @@ public class Bataille {
     }
 
     /**
+     * Affiche la grille qu'on lui passe en paramètre.
      * 
      * @param grille grille de jeu de bataille navale
-     *               Cette fonction affiche la grille qu'on lui passe en paramètre
      */
 
     public static void afficherGrille(int[][] grille) {
@@ -163,11 +178,13 @@ public class Bataille {
                     grilleJeu[j][c] = i + 1;
                 }
             }
+            System.out.println();
             afficherGrille(grilleJeu);
-            System.out.printf("Le %s a ete place.\n", nomBateau[i]);
+            System.out.printf("Le %s a ete place.\n\n", nomBateau[i]);
         }
     }
 
+    /** Instanciation d'un objet Scanner qui permet de lire au clavier */
     static Scanner scanner = new Scanner(System.in);
 
     public static int lireLettreBateau() {
@@ -175,7 +192,6 @@ public class Bataille {
         char lettre = '0';
 
         System.out.printf("Donnez la lettre pour le bateau: ");
-        // lettre = Character.toUpperCase(scanner.nextLine().charAt(0));
         lecture = scanner.nextLine();
 
         if (!lecture.isEmpty()) {
@@ -195,17 +211,20 @@ public class Bataille {
     }
 
     /**
+     * Cette méthode permet de déterminer si le String lu est bel et bien un nombre.
+     * <p>
+     * Basé sur ce que j'ai vu au lien suivant:
+     * https://www.baeldung.com/java-check-string-number
+     * <p>
+     * Essentiellement, c'est l'utilisation du try catch que j'ai appris à
+     * utiliser. Puisque mon scanner plantait en y entrant une lettre
+     * lorsque je tentais de lire un nombre. Je recevais un
+     * NumberFormatException. Avec le try catch, je peux tester pour cette
+     * exception et ainsi m'assurer de toujours avoir un nombre valide.
      * 
      * @param nombre accepte un nombre sous forme de String
      * @return Si le String est un nombre, on retourne vrai, sinon on retourne faux
-     *         Basé sur ce que j'ai vu au lien suivant:
-     *         https://www.baeldung.com/java-check-string-number
      * 
-     *         Essentiellement, c'est l'utilisation du try catch que j'ai appris à
-     *         utiliser. Puisque mon scanner plantait en y entrant une lettre
-     *         lorsque je tentais de lire un nombre. Je recevais un
-     *         NumberFormatException. Avec le try catch, je peux tester pour cette
-     *         exception et ainsi m'assurer de toujours avoir un nombre valide.
      */
 
     public static boolean estUnNombre(String nombre) {
@@ -295,6 +314,7 @@ public class Bataille {
 
         System.out.print("Résultat du tir: ");
         if (numeroBateau == 0 || numeroBateau == 6) {
+            grille[l][c] = 6;
             System.out.print("À l'eau");
         } else if (numeroBateau >= 1 && numeroBateau <= 5) {
             grille[l][c] = 6;
@@ -305,7 +325,7 @@ public class Bataille {
                 System.out.print("Touché");
             }
         }
-        System.out.println();
+        System.out.println("\n");
     }
 
     /**
@@ -336,76 +356,149 @@ public class Bataille {
         return true;
     }
 
+    /**
+     * Déroulement du jeu, le joueur joue contre l'ordinateur
+     */
     public static void engagement() {
         System.out.println("Bienvenue au jeu de bataille navale!\n");
         System.out.println("Commencez par placer vos bateaux sur la grille de jeu.\n");
 
         // Initialisation des deux grilles de jeu
         initGrilleOrdi();
-        // initGrilleJeu();
+        initGrilleJeu();
+
+        System.out.print("Pesez sur entrée pour commencer la partie");
+        scanner.nextLine();
 
         // Boucle tant que les grilles contiennent des bateaux
-        // while (!vainqueur(grilleJeu) && !vainqueur(grilleOrdi)) {
-        // // L'ordinateur joue en premier
-        // int[] tirOrdi = tirOrdinateur();
-
-        // System.out.println("Tour de l'ordinateur");
-        // System.out.printf("[%c][%d]", (char) (tirOrdi[0] + 1 + 64), tirOrdi[1] + 1);
-        // System.out.println();
-
-        // mouvement(grilleJeu, tirOrdi[0], tirOrdi[1]);
-
-        // System.out.println("Grille du joueur");
-        // afficherGrille(grilleJeu);
-
-        // // Le joueur peut jouer tant qu'il lui reste un bateau
-        // if (!vainqueur(grilleJeu)) {
-        // int[] tirJoueur = new int[2];
-
-        // tirJoueur[0] = lireLettreBateau();
-        // tirJoueur[1] = lireNombreBateau();
-
-        // System.out.println("Tour du joueur");
-        // System.out.printf("[%c][%d]", (char) (tirOrdi[0] + 1 + 64), tirJoueur[1] +
-        // 1);
-        // System.out.println();
-
-        // mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
-        // }
-        // }
-
-        // Test
-        while (!vainqueur(grilleDeJeuTest) && !vainqueur(grilleOrdi)) {
+        while (!vainqueur(grilleJeu) && !vainqueur(grilleOrdi)) {
             // L'ordinateur joue en premier
             int[] tirOrdi = tirOrdinateur();
 
+            System.out.println("********************************\n");
             System.out.println("Tour de l'ordinateur");
-            System.out.printf("[%c][%d]", (char) (tirOrdi[1] + 'A'), tirOrdi[0] + 1);
-
+            System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirOrdi[1] + 'A'), tirOrdi[0] + 1);
             System.out.println();
 
-            mouvement(grilleDeJeuTest, tirOrdi[0], tirOrdi[1]);
+            mouvement(grilleJeu, tirOrdi[0], tirOrdi[1]);
 
-            System.out.println("Grille du joueur");
-            afficherGrille(grilleDeJeuTest);
-
-            String bidon = scanner.nextLine();
+            System.out.println("*****   Grille du joueur   *****\n");
+            afficherGrille(grilleJeu);
+            System.out.println("********************************\n");
 
             // Le joueur peut jouer tant qu'il lui reste un bateau
-            if (!vainqueur(grilleDeJeuTest)) {
-                int[] tirJoueur = tirOrdinateur();
+            if (!vainqueur(grilleJeu)) {
+                int[] tirJoueur = new int[2];
 
                 System.out.println("Tour du joueur");
-                System.out.printf("[%c][%d]", (char) (tirJoueur[1] + 'A'), tirJoueur[0] + 1);
+
+                tirJoueur[1] = lireLettreBateau();
+                tirJoueur[0] = lireNombreBateau();
+
+                System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirJoueur[1] + 'A'), tirJoueur[0] + 1);
                 System.out.println();
 
                 mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
 
-                System.out.println("Grille de l'ordinateur");
-                afficherGrille(grilleOrdi);
+                System.out.print("Peser sur entrée pour continuer");
+                scanner.nextLine();
             }
         }
 
+        // Affichage du vainqueur à la fin de la partie
+        if (vainqueur(grilleJeu)) {
+            System.out.println("L'ordinateur a gagné! Vous avez perdu!");
+        } else {
+            System.out.println("Vous avez gagné! L'ordinateur a perdu!");
+        }
+    }
+
+    /** Permet de tester le jeu en évitant de faire certains input répétitifs */
+    public static void engagementTest() {
+        System.out.println("Bienvenue au module de test de bataille navale!\n");
+        System.out.println("Voici la grille de test du joueur: ");
+        afficherGrille(grilleDeJeuTest);
+
+        System.out.println("Veuillez choisir le mode de test:");
+        System.out.println("joueur avec grille test (1)");
+        System.out.println("Ordi vs ordi (2)");
+        int choixTest = Integer.valueOf(scanner.nextLine());
+
+        initGrilleOrdi();
+
+        if (choixTest == 1) {
+            // Test joueur avec grille test
+            // Boucle tant que les grilles contiennent des bateaux
+            while (!vainqueur(grilleDeJeuTest) && !vainqueur(grilleOrdi)) {
+                // L'ordinateur joue en premier
+                int[] tirOrdi = tirOrdinateur();
+
+                System.out.println("********************************\n");
+                System.out.println("Tour de l'ordinateur");
+                System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirOrdi[1] + 'A'), tirOrdi[0] + 1);
+                System.out.println();
+
+                mouvement(grilleDeJeuTest, tirOrdi[0], tirOrdi[1]);
+
+                System.out.println("*****   Grille du joueur   *****\n");
+                afficherGrille(grilleDeJeuTest);
+                System.out.println("********************************");
+
+                // Le joueur peut jouer tant qu'il lui reste un bateau
+                if (!vainqueur(grilleDeJeuTest)) {
+                    int[] tirJoueur = new int[2];
+
+                    System.out.println("Tour du joueur");
+
+                    tirJoueur[0] = lireLettreBateau();
+                    tirJoueur[1] = lireNombreBateau();
+
+                    System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirJoueur[0] + 'A'), tirJoueur[1] + 1);
+                    System.out.println();
+
+                    mouvement(grilleOrdi, tirJoueur[1], tirJoueur[0]);
+                    System.out.println("***  Grille de l'ordinateur  ***\n");
+                    afficherGrille(grilleOrdi);
+
+                    System.out.print("Peser sur entrée pour continuer");
+                    scanner.nextLine();
+                }
+            }
+        } else if (choixTest == 2) {
+            // Test ordi vs ordi
+            while (!vainqueur(grilleDeJeuTest) && !vainqueur(grilleOrdi)) {
+                // L'ordinateur joue en premier
+                int[] tirOrdi = tirOrdinateur();
+
+                System.out.println("********************************\n");
+                System.out.println("Tour de l'ordinateur");
+                System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirOrdi[1] + 'A'), tirOrdi[0] + 1);
+
+                System.out.println();
+
+                mouvement(grilleDeJeuTest, tirOrdi[0], tirOrdi[1]);
+
+                System.out.println("*****   Grille du joueur   *****\n");
+                afficherGrille(grilleDeJeuTest);
+                System.out.println("********************************");
+
+                scanner.nextLine();
+
+                // Le joueur peut jouer tant qu'il lui reste un bateau
+                if (!vainqueur(grilleDeJeuTest)) {
+                    int[] tirJoueur = tirOrdinateur();
+
+                    System.out.println("Tour du joueur");
+                    System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirJoueur[1] + 'A'), tirJoueur[0] + 1);
+                    System.out.println();
+
+                    mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
+
+                    System.out.println("***  Grille de l'ordinateur  ***\n");
+                    afficherGrille(grilleOrdi);
+                }
+            }
+        }
         // Affichage du vainqueur à la fin de la partie
         if (vainqueur(grilleDeJeuTest)) {
             System.out.println("L'ordinateur a gagné! Vous avez perdu!");
