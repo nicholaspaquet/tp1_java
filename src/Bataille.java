@@ -7,10 +7,13 @@ import java.util.Scanner;
  */
 
 public class Bataille {
+
     /** Grille de jeu de l'ordinateur */
     public static int[][] grilleOrdi = new int[10][10];
+
     /** Grille de jeu du joueur */
     public static int[][] grilleJeu = new int[10][10];
+
     /** Grille de jeu de test */
     public static int[][] grilleDeJeuTest = {
             { 5, 0, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
@@ -29,8 +32,13 @@ public class Bataille {
      * @param args
      */
     public static void main(String[] args) {
-        engagement();
+        // engagement();
         // engagementTest();
+        // initGrilleJeu();
+        // afficherGrille(grilleJeu);
+
+        initGrilleOrdi();
+        afficherGrille(grilleOrdi);
 
         // Si le scanner n'est pas fermé, il y a un "leak" des ressources.
         scanner.close();
@@ -51,24 +59,37 @@ public class Bataille {
     public static boolean posOk(int[][] grille, int l, int c, int d, int t) {
         boolean possibleDePlacerBateau = false;
 
-        if (d == 1 && c + t < 10) {
-            for (int i = c; i < c + t; ++i) {
-                if (grille[l][i] != 0) {
-                    possibleDePlacerBateau = false;
-                    break;
-                } else {
-                    possibleDePlacerBateau = true;
+        // Il y a un test selon la direction (1) ou (2)
+        switch (d) {
+            case 1:
+                // La colonne(c) + le nombre de cases(t) que le bateau occupe doit être en
+                // dessous de 10 pour rentrer dans la grille
+                if (c + t < 10) {
+                    for (int i = c; i < c + t; ++i) {
+                        // On boucle et si on ne rencontre pas de zéro, on peut placer le bateau
+                        if (grille[l][i] != 0) {
+                            possibleDePlacerBateau = false;
+                            break;
+                        } else {
+                            possibleDePlacerBateau = true;
+                        }
+                    }
                 }
-            }
-        } else if (d == 2 && l + t < 10) {
-            for (int i = l; i < l + t; ++i) {
-                if (grille[i][c] != 0) {
-                    possibleDePlacerBateau = false;
-                    break;
-                } else {
-                    possibleDePlacerBateau = true;
+                break;
+            case 2:
+                // Même principle mais il faut vérifier que la ligne(l) + le nombre de cases(t)
+                // est sous 10
+                if (l + t < 10) {
+                    for (int i = l; i < l + t; ++i) {
+                        if (grille[i][c] != 0) {
+                            possibleDePlacerBateau = false;
+                            break;
+                        } else {
+                            possibleDePlacerBateau = true;
+                        }
+                    }
                 }
-            }
+                break;
         }
         return possibleDePlacerBateau;
     }
@@ -101,25 +122,47 @@ public class Bataille {
         int d = randRange(1, 3); // direction du bateau
         int[] t = { 5, 4, 3, 3, 1 }; // le nombre de cases que chaque bateau occupe
 
-        // On boucle 5 fois car il y a 5 bateaux à placer.
-        for (int bateau = 0; bateau < 5; ++bateau) {
+        // On boucle 5 fois,car il y a 5 bateaux à placer.
+        for (int indiceBateau = 0; indiceBateau < 5; ++indiceBateau) {
+
             // On boucle tant que les cases voulues ne sont pas disponibles.
-            while (!posOk(grilleOrdi, l, c, d, t[bateau])) {
+            while (!posOk(grilleOrdi, l, c, d, t[indiceBateau])) {
                 l = randRange(0, 10);
                 c = randRange(0, 10);
                 d = randRange(1, 3);
             }
-            if (d == 1) {
-                // Placement du bateau à l'horizontale
-                for (int i = c; i < c + t[bateau]; ++i) {
-                    grilleOrdi[l][i] = bateau + 1; // +1 au bateau puisqu'on boucle de 0 à 4
+            System.out.printf("%d %d %d %d %d", l, c, d, t[indiceBateau], indiceBateau);
+            placerBateau(grilleOrdi, l, c, d, t[indiceBateau], indiceBateau);
+            // switch (d) {
+            // case 1:
+            // // Placement du bateau à l'horizontale
+            // for (int i = c; i < c + t[bateau]; ++i) {
+            // grilleOrdi[l][i] = bateau + 1; // +1 au bateau puisqu'on boucle de 0 à 4
+            // }
+            // break;
+            // case 2:
+            // // Placement du bateau à la verticale
+            // for (int i = l; i < l + t[bateau]; ++i) {
+            // grilleOrdi[i][c] = bateau + 1;
+            // }
+            // break;
+            // }
+        }
+    }
+
+    public static void placerBateau(int grille[][], int l, int c, int d, int t, int indiceBateau) {
+        System.out.println("fonction placerBateau()");
+        switch (d) {
+            case 1:
+                for (int j = c; j < c + t; ++j) {
+                    grille[l][j] = indiceBateau + 1;
                 }
-            } else if (d == 2) {
-                // Placement du bateau à la verticale
-                for (int i = l; i < l + t[bateau]; ++i) {
-                    grilleOrdi[i][c] = bateau + 1;
+                break;
+            case 2:
+                for (int j = l; j < l + t; ++j) {
+                    grille[j][c] = indiceBateau + 1;
                 }
-            }
+                break;
         }
     }
 
@@ -130,26 +173,36 @@ public class Bataille {
      */
 
     public static void afficherGrille(int[][] grille) {
-        char[] premiereLigne = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+        char[] entetesColonnes = { ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 
-        for (char lettre : premiereLigne) {
-            System.out.printf("%2c ", lettre);
+        // Boucle for each, pour chaque lettreColonne dans entetesColonnes, on imprime
+        // la lettre
+        for (char lettreColonne : entetesColonnes) {
+            System.out.printf("%2c ", lettreColonne);
         }
         System.out.println();
 
-        for (int i = 0; i < 10; ++i) {
-            System.out.printf("%2d ", i + 1);
-            for (int j = 0; j < 10; ++j) {
-                System.out.printf("%2d ", grille[i][j]);
+        for (int l = 0; l < 10; ++l) {
+            // On imprime d'abord le numéro de la ligne
+            System.out.printf("%2d ", l + 1);
+
+            // Puis, on imprime chaque case de [l][0] jusqu'a [l][9]
+            for (int c = 0; c < 10; ++c) {
+                System.out.printf("%2d ", grille[l][c]);
             }
             System.out.println();
         }
         System.out.println();
     }
 
+    /**
+     * Initialise la grille du joueur en fonction des données qu'il saisit
+     * manuellement.
+     */
+
     public static void initGrilleJeu() {
         String[] nomBateau = { "porte-avions", "croiseur", "contre-torpilleur", "sous-marin", "torpilleur" };
-        int[] t = { 5, 4, 3, 3, 1 };
+        int[] t = { 5, 4, 3, 3, 1 }; // Nombre de cases que les bateaux occupent
 
         for (int i = 0; i < 5; ++i) {
             System.out.printf("Placement du %s\n", nomBateau[i]);
@@ -159,25 +212,29 @@ public class Bataille {
             int l = lireNombreBateau();
             int d = lireDirectionBateau();
 
+            // On boucle tant que la position n'est pas valide.
             while (!posOk(grilleJeu, l, c, d, t[i])) {
+                // Message d'erreur pour le joueur
                 System.out.printf(
                         "Impossible de placer un bateau ici. Veuillez choisir une autre position pour placer le %s\n",
                         nomBateau[i]);
-
+                // On recommence la lecture
                 c = lireLettreBateau();
                 l = lireNombreBateau();
                 d = lireDirectionBateau();
             }
 
-            if (d == 1) {
-                for (int j = c; j < c + t[i]; ++j) {
-                    grilleJeu[l][j] = i + 1;
-                }
-            } else if (d == 2) {
-                for (int j = l; j < l + t[i]; ++j) {
-                    grilleJeu[j][c] = i + 1;
-                }
-            }
+            placerBateau(grilleJeu, l, c, d, t[i], i);
+
+            // if (d == 1) {
+            // for (int j = c; j < c + t[i]; ++j) {
+            // grilleJeu[l][j] = i + 1;
+            // }
+            // } else if (d == 2) {
+            // for (int j = l; j < l + t[i]; ++j) {
+            // grilleJeu[j][c] = i + 1;
+            // }
+            // }
             System.out.println();
             afficherGrille(grilleJeu);
             System.out.printf("Le %s a ete place.\n\n", nomBateau[i]);
@@ -314,7 +371,6 @@ public class Bataille {
 
         System.out.print("Résultat du tir: ");
         if (numeroBateau == 0 || numeroBateau == 6) {
-            grille[l][c] = 6;
             System.out.print("À l'eau");
         } else if (numeroBateau >= 1 && numeroBateau <= 5) {
             grille[l][c] = 6;
@@ -482,7 +538,7 @@ public class Bataille {
                 afficherGrille(grilleDeJeuTest);
                 System.out.println("********************************");
 
-                scanner.nextLine();
+                // scanner.nextLine();
 
                 // Le joueur peut jouer tant qu'il lui reste un bateau
                 if (!vainqueur(grilleDeJeuTest)) {
