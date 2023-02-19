@@ -1,3 +1,6 @@
+// Questions à poser lundi
+// Est-ce que chaque tir doit ecrire un 6 s'il ne touche rien
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -29,6 +32,8 @@ public class Bataille {
     };
 
     /**
+     * Point de départ du programme
+     * 
      * @param args
      */
     public static void main(String[] args) {
@@ -36,9 +41,10 @@ public class Bataille {
         // engagementTest();
         // initGrilleJeu();
         // afficherGrille(grilleJeu);
+        lireLettreBateau();
 
-        initGrilleOrdi();
-        afficherGrille(grilleOrdi);
+        // initGrilleOrdi();
+        // afficherGrille(grilleOrdi);
 
         // Si le scanner n'est pas fermé, il y a un "leak" des ressources.
         scanner.close();
@@ -112,6 +118,33 @@ public class Bataille {
     }
 
     /**
+     * Place un bateau sur la grille de jeux selon les paramètres passés
+     * 
+     * @param grille       une grille de jeu
+     * @param l            un numero de ligne
+     * @param c            un numero de colonne (compris entre 0 et 9)
+     * @param d            un entier d codant une direction (1 pour horizontal et 2
+     *                     pour vertical)
+     * @param t            un entier t donnant le nombre de cases d'un bateau
+     * @param indiceBateau Numéro représentant un bateau sur la grille
+     */
+
+    public static void placerBateau(int grille[][], int l, int c, int d, int t, int indiceBateau) {
+        switch (d) {
+            case 1:
+                for (int j = c; j < c + t; ++j) {
+                    grille[l][j] = indiceBateau + 1;
+                }
+                break;
+            case 2:
+                for (int j = l; j < l + t; ++j) {
+                    grille[j][c] = indiceBateau + 1;
+                }
+                break;
+        }
+    }
+
+    /**
      * Initialise la grille de l'ordinateur de façon aléatoire.
      */
 
@@ -131,43 +164,13 @@ public class Bataille {
                 c = randRange(0, 10);
                 d = randRange(1, 3);
             }
-            System.out.printf("%d %d %d %d %d", l, c, d, t[indiceBateau], indiceBateau);
+            // Finalement, on place le bateau sur la grille
             placerBateau(grilleOrdi, l, c, d, t[indiceBateau], indiceBateau);
-            // switch (d) {
-            // case 1:
-            // // Placement du bateau à l'horizontale
-            // for (int i = c; i < c + t[bateau]; ++i) {
-            // grilleOrdi[l][i] = bateau + 1; // +1 au bateau puisqu'on boucle de 0 à 4
-            // }
-            // break;
-            // case 2:
-            // // Placement du bateau à la verticale
-            // for (int i = l; i < l + t[bateau]; ++i) {
-            // grilleOrdi[i][c] = bateau + 1;
-            // }
-            // break;
-            // }
-        }
-    }
-
-    public static void placerBateau(int grille[][], int l, int c, int d, int t, int indiceBateau) {
-        System.out.println("fonction placerBateau()");
-        switch (d) {
-            case 1:
-                for (int j = c; j < c + t; ++j) {
-                    grille[l][j] = indiceBateau + 1;
-                }
-                break;
-            case 2:
-                for (int j = l; j < l + t; ++j) {
-                    grille[j][c] = indiceBateau + 1;
-                }
-                break;
         }
     }
 
     /**
-     * Affiche la grille qu'on lui passe en paramètre.
+     * Affiche la grille de jeu qu'on lui passe en paramètre.
      * 
      * @param grille grille de jeu de bataille navale
      */
@@ -223,47 +226,59 @@ public class Bataille {
                 l = lireNombreBateau();
                 d = lireDirectionBateau();
             }
-
+            // On place le bateau sur la grille de jeu
             placerBateau(grilleJeu, l, c, d, t[i], i);
 
-            // if (d == 1) {
-            // for (int j = c; j < c + t[i]; ++j) {
-            // grilleJeu[l][j] = i + 1;
-            // }
-            // } else if (d == 2) {
-            // for (int j = l; j < l + t[i]; ++j) {
-            // grilleJeu[j][c] = i + 1;
-            // }
-            // }
+            // On affiche la grille mise à jour
             System.out.println();
             afficherGrille(grilleJeu);
             System.out.printf("Le %s a ete place.\n\n", nomBateau[i]);
         }
     }
 
-    /** Instanciation d'un objet Scanner qui permet de lire au clavier */
+    /**
+     * Instanciation d'un objet Scanner qui permet de lire au clavier
+     * https://www.w3schools.com/java/java_user_input.asp
+     */
+
     static Scanner scanner = new Scanner(System.in);
+
+    /**
+     * Lis une lettre au clavier entrée par le joueur de 'A' à 'J'.
+     * 
+     * @return retourne un nombre représentant la colonne de la grille de 0 à 9
+     */
 
     public static int lireLettreBateau() {
         String lecture;
         char lettre = '0';
 
         System.out.printf("Donnez la lettre pour le bateau: ");
+        // Lecture d'une lettre,
         lecture = scanner.nextLine();
 
-        if (!lecture.isEmpty()) {
+        // Je test ici afin de savoir si quelque chose a été lu sinon ça plante
+        // Je valide également que seulement un caractère a été entré
+        if (!lecture.isEmpty() && lecture.length() == 1) {
+            // La premiere lettre lue dans la lecture sera convertie en caractère puisque le
+            // scanner n'a pas de façon intégré de lire directement un char.
+            // Je converti également la lettre en majuscule pour que ce soit valide peu
+            // importe la case.
             lettre = Character.toUpperCase(lecture.charAt(0));
         }
 
+        // Validation que la lettre est entre 'A' et 'J'
         while (lettre < 'A' || lettre > 'J') {
             System.out.println("Lettre invalide, veuillez entre une lettre de 'A' a 'J'.");
+
             System.out.printf("Donnez la lettre pour le bateau: ");
             lecture = scanner.nextLine();
 
-            if (!lecture.isEmpty()) {
+            if (!lecture.isEmpty() && lecture.length() == 1) {
                 lettre = Character.toUpperCase(lecture.charAt(0));
             }
         }
+        // Conversation de la valeur de la lettre en nombre de 0 à 9
         return (Integer.valueOf(lettre) - 65);
     }
 
@@ -293,6 +308,11 @@ public class Bataille {
         return true;
     }
 
+    /**
+     * Lis un nombre au clavier de 1 à 10
+     * 
+     * @return retourne un nombre de 0 à 9
+     */
     public static int lireNombreBateau() {
         String lecture;
         int nombre = 0;
@@ -300,12 +320,15 @@ public class Bataille {
         System.out.printf("Donnez le nombre pour le bateau: ");
         lecture = scanner.nextLine();
 
+        // Si un nombre est lu, on converti le string en int
         if (estUnNombre(lecture)) {
             nombre = Integer.valueOf(lecture);
         }
 
+        // On valide si le nombre lu se trouve entre 1 et 10
         while (nombre < 1 || nombre > 10) {
             System.out.println("Nombre invalide, veuillez entrez un nombre de 1 à 10.");
+            
             System.out.printf("Donnez le nombre pour le bateau: ");
             lecture = scanner.nextLine();
 
@@ -313,9 +336,14 @@ public class Bataille {
                 nombre = Integer.valueOf(lecture);
             }
         }
+        // Retourne le nombre -1 puisqu'on travaille avec des tableaux
+        // qui commencent à 0
         return nombre - 1;
     }
 
+    /**
+     * @return
+     */
     public static int lireDirectionBateau() {
         String lecture;
         int direction = 0;
