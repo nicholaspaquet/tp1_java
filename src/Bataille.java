@@ -1,5 +1,14 @@
-// Questions à poser lundi
-// Est-ce que chaque tir doit ecrire un 6 s'il ne touche rien
+/*
+ * Nom: Nicholas Paquet
+ * 
+ * Dernière modification: 22 février 2023
+ * Date de remise: 6 mars 2023
+ * 
+ * Description: Ce programme est un jeu de bataille navale simple qui se joue entre un joueur et
+ * l'ordinateur. L'ordinateur tir et place les bateaux sur sa grille de façon aléatoire. Le joueur
+ * choisit ou il place ses bateaux et choisit les coordonnées pour ses tirs. Le jeu prend fin
+ * lorsqu'une des deux grilles n'a plus de bateaux.
+ */
 
 import java.util.Random;
 import java.util.Scanner;
@@ -37,14 +46,8 @@ public class Bataille {
      * @param args
      */
     public static void main(String[] args) {
-        // engagement();
-        // engagementTest();
-        // initGrilleJeu();
-        // afficherGrille(grilleJeu);
-        lireLettreBateau();
-
-        // initGrilleOrdi();
-        // afficherGrille(grilleOrdi);
+        // Exécution du jeu
+        engagement();
 
         // Si le scanner n'est pas fermé, il y a un "leak" des ressources.
         scanner.close();
@@ -283,7 +286,7 @@ public class Bataille {
     }
 
     /**
-     * Cette méthode permet de déterminer si le String lu est bel et bien un nombre.
+     * Détermine si le String lu est bel et bien un nombre.
      * <p>
      * Basé sur ce que j'ai vu au lien suivant:
      * https://www.baeldung.com/java-check-string-number
@@ -309,7 +312,7 @@ public class Bataille {
     }
 
     /**
-     * Lis un nombre au clavier de 1 à 10
+     * Lis un nombre au clavier de 1 à 10.
      * 
      * @return retourne un nombre de 0 à 9
      */
@@ -328,7 +331,7 @@ public class Bataille {
         // On valide si le nombre lu se trouve entre 1 et 10
         while (nombre < 1 || nombre > 10) {
             System.out.println("Nombre invalide, veuillez entrez un nombre de 1 à 10.");
-            
+
             System.out.printf("Donnez le nombre pour le bateau: ");
             lecture = scanner.nextLine();
 
@@ -342,7 +345,10 @@ public class Bataille {
     }
 
     /**
-     * @return
+     * Lis le nombre 1 ou 2 au clavier.
+     * 
+     * @return Retourne le nombre 1 (direction horizontale) ou 2 (direction
+     *         verticale)
      */
     public static int lireDirectionBateau() {
         String lecture;
@@ -368,13 +374,13 @@ public class Bataille {
     }
 
     /**
+     * Détermine si le bateau donné en argument est toujours sur la grille de jeu.
+     * 
      * @param grille une grille de jeu
      * @param bateau un numéro de bateau de 1 à 5
-     * @return vrai si le bateau a coulé, faux si le bateau est toujours sur la
+     * @return Retourne vrai si le bateau a coulé, faux si le bateau est toujours
+     *         sur la
      *         grille
-     * 
-     *         Cette fonction retourne si le bateau donné en argument est toujours
-     *         sur la grille de jeu.
      */
 
     public static boolean couler(int[][] grille, int bateau) {
@@ -389,6 +395,10 @@ public class Bataille {
     }
 
     /**
+     * Effectue le tir sur la grille donnée, à la position donnée. Place le nombre 6
+     * sur la grille à la position donnée. Affiche également le résultat du tir soit
+     * "À l'eau", "coulé" ou "touché".
+     * 
      * @param grille Une grille de jeu
      * @param l      Numéro de ligne
      * @param c      Numéro de colonne
@@ -398,23 +408,52 @@ public class Bataille {
         int numeroBateau = grille[l][c];
 
         System.out.print("Résultat du tir: ");
-        if (numeroBateau == 0 || numeroBateau == 6) {
-            System.out.print("À l'eau");
-        } else if (numeroBateau >= 1 && numeroBateau <= 5) {
-            grille[l][c] = 6;
 
-            if (couler(grille, numeroBateau)) {
-                System.out.print("Coulé");
-            } else {
-                System.out.print("Touché");
+        switch (numeroBateau) {
+            case 0: {
+                grille[l][c] = 6;
+            }
+            case 6: {
+                System.out.print("À l'eau");
+                break;
+            }
+            default: {
+                grille[l][c] = 6;
+
+                // Test pour voir si le bateau a été coulé
+                if (couler(grille, numeroBateau)) {
+                    System.out.print("Coulé");
+                } else {
+                    System.out.print("Touché");
+                }
+                break;
             }
         }
+
+        // if (numeroBateau == 0 || numeroBateau == 6) {
+        // // Placement du tir sur la grille
+        // grille[l][c] = 6;
+        // System.out.print("À l'eau");
+        // } else if (numeroBateau >= 1 && numeroBateau <= 5) {
+        // grille[l][c] = 6;
+
+        // // Test pour voir si le bateau a été coulé
+        // if (couler(grille, numeroBateau)) {
+        // System.out.print("Coulé");
+        // } else {
+        // System.out.print("Touché");
+        // }
+        // }
+
         System.out.println("\n");
     }
 
     /**
+     * Effectue une sélection aléatoire de coordonnées pour le tir de l'ordinateur.
+     * 
      * @return Retourne un tableau avec les coordonnées aléatoires d'un tir
      */
+
     public static int[] tirOrdinateur() {
         int[] tir = new int[2];
 
@@ -425,6 +464,8 @@ public class Bataille {
     }
 
     /**
+     * Valide si la grille donnée a encore des bateaux en jeu.
+     * 
      * @param grille Une grille de jeu
      * @return Retourne faux s'il reste un bateau sur la grille de jeu, sinon
      *         retourne vrai
@@ -441,8 +482,9 @@ public class Bataille {
     }
 
     /**
-     * Déroulement du jeu, le joueur joue contre l'ordinateur
+     * Déroulement du jeu, le joueur joue contre l'ordinateur.
      */
+
     public static void engagement() {
         System.out.println("Bienvenue au jeu de bataille navale!\n");
         System.out.println("Commencez par placer vos bateaux sur la grille de jeu.\n");
@@ -461,11 +503,15 @@ public class Bataille {
 
             System.out.println("********************************\n");
             System.out.println("Tour de l'ordinateur");
+
+            // Affichage des coordonnées du tir
             System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirOrdi[1] + 'A'), tirOrdi[0] + 1);
             System.out.println();
 
+            // L'ordinateur effectue son tir sur la grille du joueur
             mouvement(grilleJeu, tirOrdi[0], tirOrdi[1]);
 
+            // Affichage du résultat du tir de l'ordinateur
             System.out.println("*****   Grille du joueur   *****\n");
             afficherGrille(grilleJeu);
             System.out.println("********************************\n");
@@ -476,12 +522,14 @@ public class Bataille {
 
                 System.out.println("Tour du joueur");
 
+                // Lecture des coordonnées de tir du joueur
                 tirJoueur[1] = lireLettreBateau();
                 tirJoueur[0] = lireNombreBateau();
 
-                System.out.printf("Coordonnées du tir: [%c][%d]", (char) (tirJoueur[1] + 'A'), tirJoueur[0] + 1);
-                System.out.println();
+                // Affichage des coordonnées du tir
+                System.out.printf("Coordonnées du tir: [%c][%d]\n", (char) (tirJoueur[1] + 'A'), tirJoueur[0] + 1);
 
+                // Le joueur effectue son tir sur la grille de l'ordinateur
                 mouvement(grilleOrdi, tirJoueur[0], tirJoueur[1]);
 
                 System.out.print("Peser sur entrée pour continuer");
@@ -489,10 +537,15 @@ public class Bataille {
             }
         }
 
-        // Affichage du vainqueur à la fin de la partie
+        // Affichage du vainqueur et de la grille de jeu du perdant à la fin de la
+        // partie
         if (vainqueur(grilleJeu)) {
+            System.out.println("*****   Grille du joueur   *****\n");
+            afficherGrille(grilleJeu);
             System.out.println("L'ordinateur a gagné! Vous avez perdu!");
         } else {
+            System.out.println("***  Grille de l'ordinateur  ***\n");
+            afficherGrille(grilleOrdi);
             System.out.println("Vous avez gagné! L'ordinateur a perdu!");
         }
     }
@@ -591,22 +644,3 @@ public class Bataille {
         }
     }
 }
-
-// porte-avion, representé par le nombre 1, 5 cases
-// croiseur, representé par le nombre 2, 4 cases
-// contre-torpilleur, representé par le nombre 3, 3 cases
-// sous-marin, representé par le nombre 4, 3 cases
-// torpilleur, representé par le nombre 5, 1 cases
-
-// int[][] grilleDeJeuTest = {
-// { 5, 6, 0, 4, 0, 0, 2, 2, 2, 2 }, // 1
-// { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 2
-// { 0, 0, 0, 4, 0, 0, 0, 0, 0, 0 }, // 3
-// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 4
-// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 5
-// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 6
-// { 0, 3, 3, 3, 0, 0, 0, 0, 0, 0 }, // 7
-// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 8
-// { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // 9
-// { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 } // 10
-// };
